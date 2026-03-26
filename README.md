@@ -1,4 +1,4 @@
-# Hospital Management System - Detailed Class Diagram
+# Hospital Management System
 
 ## Complete Class Diagram (UML Format)
 
