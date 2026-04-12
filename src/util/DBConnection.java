@@ -13,20 +13,25 @@ public class DBConnection {
     }
 
     public static Connection getConnection() {
-        if (connection == null) {
-            try {
-                // Load JDBC driver
-                Class.forName("com.mysql.cj.jdbc.Driver");
-
-                // Get connection details from property file
-                String connectionString = PropertyUtil.getPropertyString();
-                
-                // Establish the connection
-                connection = DriverManager.getConnection(connectionString);
-            } catch (ClassNotFoundException | SQLException e) {
-                e.printStackTrace(); // Handle the exception according to your needs
+        try {
+            if (connection != null && !connection.isClosed()) {
+                return connection;
             }
+        } catch (SQLException e) {
+            throw new IllegalStateException("Unable to check database connection.", e);
         }
-        return connection;
+
+        try {
+            String connectionString = PropertyUtil.getPropertyString();
+            if (connectionString == null || connectionString.trim().isEmpty()) {
+                throw new IllegalStateException("Database properties are missing or incomplete.");
+            }
+
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            connection = DriverManager.getConnection(connectionString);
+            return connection;
+        } catch (ClassNotFoundException | SQLException e) {
+            throw new IllegalStateException("Unable to connect to database. Check MySQL and util/db.properties.", e);
+        }
     }
 }

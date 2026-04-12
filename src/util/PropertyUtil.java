@@ -24,13 +24,16 @@ public class PropertyUtil {
             // Load a properties file from class path
             properties.load(input);
 
-            // Construct the connection string
             String url = properties.getProperty("db.url");
             String username = properties.getProperty("db.username");
             String password = properties.getProperty("db.password");
-         
 
-            return (url +  "?user=" + username + "&password=" + password);
+            if (url == null || username == null || password == null) {
+                return null;
+            }
+
+            String separator = url.contains("?") ? "&" : "?";
+            return url + separator + "user=" + username + "&password=" + password + "&createDatabaseIfNotExist=true";
         } catch (IOException e) {
             System.out.println("Not found"); // Handle the exception according to your needs
             return null;

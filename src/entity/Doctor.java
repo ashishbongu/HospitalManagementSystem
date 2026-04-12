@@ -2,27 +2,32 @@ package entity;
 
 public class Doctor {
 	private int doctorId;
-	private String firstName,lastName,specialization,contactNumber;
+	private String fullName,specialization,contactNumber;
 	
 	public Doctor()
 	{
 		this.doctorId=0;
-		this.firstName="No input";
-		this.lastName="No input";
+		this.fullName="No input";
 		this.specialization="No input";
 		this.contactNumber ="No input";
 	}
 	public Doctor(int doctorId,String firstName,String lastName,String specialization,String contactNumber)
 	{
 		this.doctorId=doctorId;
-		this.firstName=firstName;
-		this.lastName=lastName;
+		this.fullName=((firstName == null ? "" : firstName) + " " + (lastName == null ? "" : lastName)).trim();
+		this.specialization=specialization;
+		this.contactNumber =contactNumber;
+	}
+	public Doctor(int doctorId,String fullName,String specialization,String contactNumber)
+	{
+		this.doctorId=doctorId;
+		this.fullName=fullName;
 		this.specialization=specialization;
 		this.contactNumber =contactNumber;
 	}
 	@Override
 	public String toString() {
-		return "Doctor [doctorId=" + doctorId + ", firstName=" + firstName + ", lastName=" + lastName
+		return "Doctor [doctorId=" + doctorId + ", fullName=" + fullName
 				+ ", specialization=" + specialization + ", contactNumber=" + contactNumber + "]";
 	}
 	public int getDoctorId() {
@@ -31,17 +36,25 @@ public class Doctor {
 	public void setDoctorId(int doctorId) {
 		this.doctorId = doctorId;
 	}
+	public String getFullName() {
+		return fullName;
+	}
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
+	}
 	public String getFirstName() {
-		return firstName;
+		return fullName;
 	}
 	public void setFirstName(String firstName) {
-		this.firstName = firstName;
+		this.fullName = firstName;
 	}
 	public String getLastName() {
-		return lastName;
+		return "";
 	}
 	public void setLastName(String lastName) {
-		this.lastName = lastName;
+		if (lastName != null && !lastName.trim().isEmpty()) {
+			this.fullName = ((this.fullName == null ? "" : this.fullName) + " " + lastName).trim();
+		}
 	}
 	public String getSpecialization() {
 		return specialization;

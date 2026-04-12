@@ -31,14 +31,13 @@ public class HospitalServiceImpl implements IHospitalService {
         List<Appointment> appointments = new ArrayList<>();
         try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM Appointment WHERE patientId = ?")) {
             statement.setInt(1, patientId);
-            ResultSet resultSet = statement.executeQuery();
-            if(resultSet.next())
+            try (ResultSet resultSet = statement.executeQuery()) {
             	while (resultSet.next()) {
                 appointments.add(mapResultSetToAppointment(resultSet));
+            	}
             }
-            else
-            {
-            	throw new PatientNumberNotFoundException("Pateint Number not found"+ patientId);
+            if (appointments.isEmpty()) {
+            	throw new PatientNumberNotFoundException("Patient Number not found " + patientId);
             }
         } catch (SQLException e) {
             e.printStackTrace(); 
@@ -67,12 +66,11 @@ public class HospitalServiceImpl implements IHospitalService {
     public boolean scheduleAppointment(Appointment appointment) {
         Connection connection = DBConnection.getConnection();
         try (PreparedStatement statement = connection.prepareStatement(
-                "INSERT INTO Appointment (appointmentId, patientId, doctorId, appointmentDate, description) VALUES (?, ?, ?, ?, ?)")) {
-            statement.setInt(1, appointment.getAppointmentId());
-            statement.setInt(2, appointment.getPatientId());
-            statement.setInt(3, appointment.getDoctorId());
-            statement.setDate(4, new java.sql.Date(appointment.getAppointmentDate().getTime()));
-            statement.setString(5, appointment.getDescription());
+                "INSERT INTO Appointment (patientId, doctorId, appointmentDate, description) VALUES (?, ?, ?, ?)")) {
+            statement.setInt(1, appointment.getPatientId());
+            statement.setInt(2, appointment.getDoctorId());
+            statement.setDate(3, new java.sql.Date(appointment.getAppointmentDate().getTime()));
+            statement.setString(4, appointment.getDescription());
             int rowsAffected = statement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
